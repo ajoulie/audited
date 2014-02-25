@@ -1,3 +1,5 @@
+require 'rails-observers'
+
 module Audited
   class Sweeper < ActiveModel::Observer
     observe Audited.audit_class
