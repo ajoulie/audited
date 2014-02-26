@@ -44,8 +44,3 @@ module Audited
   end
 end
 
-if defined?(ActionController) and defined?(ActionController::Base)
-  ActionController::Base.class_eval do
-    around_filter Audited::Sweeper.instance
-  end
-end

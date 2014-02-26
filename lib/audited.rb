@@ -1,3 +1,5 @@
+require 'audited/railtie'
+
 module Audited
   VERSION = '3.0.0'
 
