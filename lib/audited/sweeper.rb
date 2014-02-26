@@ -1,15 +1,13 @@
 require 'rails-observers'
+require 'rails/observers/active_model'
 
 module Audited
   class Sweeper < ActiveModel::Observer
     observe Audited.audit_class
 
-    def before(controller)
+    def around(controller)
       self.controller = controller
-      true
-    end
-
-    def after(controller)
+      yield
       self.controller = nil
     end
 
