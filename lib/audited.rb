@@ -1,4 +1,4 @@
-require 'audited/railtie'
+require 'audited/railtie' if defined?(Rails)
 
 module Audited
   VERSION = '4.0.0'
