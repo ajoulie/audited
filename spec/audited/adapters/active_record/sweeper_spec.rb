@@ -1,5 +1,7 @@
 require File.expand_path('../active_record_spec_helper', __FILE__)
 
+require 'audited/active_support.rb'
+
 class AuditsController < ActionController::Base
   def audit
     @company = Models::ActiveRecord::Company.create
