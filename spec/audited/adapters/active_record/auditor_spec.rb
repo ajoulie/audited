@@ -499,7 +499,7 @@ describe Audited::Auditor, :adapter => :active_record do
   end
 
   describe "after_audit" do
-    let( :user ) { user = Models::ActiveRecord::UserWithAfterAudit.new }
+    let( :user ) { Models::ActiveRecord::UserWithAfterAudit.new }
 
     it "should invoke after_audit callback on create" do
       user.bogus_attr.should == nil
