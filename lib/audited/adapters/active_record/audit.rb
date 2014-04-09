@@ -19,8 +19,8 @@ module Audited
 
         serialize :audited_changes
 
-        default_scope         lambda {order(:version)}
-        scope :descending,    lambda {reorder("version DESC")}
+        default_scope         lambda {order(:created_at)}
+        scope :descending,    lambda {reorder("created_at DESC")}
         scope :creates,       lambda {where(:action => 'create')}
         scope :updates,       lambda {where(:action => 'update')}
         scope :destroys,      lambda {where(:action => 'destroy')}
@@ -31,8 +31,8 @@ module Audited
 
         # Return all audits older than the current one.
         def ancestors
-          self.class.where(['auditable_id = ? and auditable_type = ? and version <= ?',
-            auditable_id, auditable_type, version])
+          self.class.where(['auditable_id = ? and auditable_type = ? and created_at <= ?',
+            auditable_id, auditable_type, created_at])
         end
 
         # Allows user to be set to either a string or an ActiveRecord object
@@ -55,12 +55,12 @@ module Audited
         alias_method :user, :user_as_string
 
       private
-        def set_version_number
+        def next_version
           max = self.class.where(
               :auditable_id => auditable_id,
               :auditable_type => auditable_type
             ).maximum(:version) || 0
-          self.version = max + 1
+          max + 1
         end
       end
     end

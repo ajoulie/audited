@@ -119,6 +119,8 @@ module Audited
       #   end
       #
       def revisions(from_version = 1)
+        return [] unless Audited.use_version_number
+
         audits = self.audits.from_version(from_version)
         return [] if audits.empty?
         revisions = []
@@ -130,6 +132,7 @@ module Audited
 
       # Get a specific revision specified by the version number, or +:previous+
       def revision(version)
+        return nil unless Audited.use_version_number
         revision_with Audited.audit_class.reconstruct_attributes(audits_to(version))
       end
 

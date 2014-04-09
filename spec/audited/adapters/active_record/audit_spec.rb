@@ -46,11 +46,11 @@ describe Audited::Adapters::ActiveRecord::Audit, :adapter => :active_record do
   describe "revision" do
 
     it "should recreate attributes" do
-      user = Models::ActiveRecord::User.create :name => "1"
-      5.times { |i| user.update_attribute :name, (i + 2).to_s }
+      user = Models::ActiveRecord::User.create :name => "0"
+      5.times { |i| user.update_attribute :name, (i + 1).to_s }
 
-      user.audits.each do |audit|
-        audit.revision.name.should == audit.version.to_s
+      user.audits.each_with_index do |audit, index|
+        audit.revision.name.should == index.to_s
       end
     end
 
@@ -60,8 +60,8 @@ describe Audited::Adapters::ActiveRecord::Audit, :adapter => :active_record do
       u.update_attribute :logins, 2
 
       u.audits[2].revision.logins.should be(2)
-      u.audits[1].revision.logins.should be(1)
-      u.audits[0].revision.logins.should be(0)
+      u.audits[1].revision.logins.should eq(1)
+      u.audits[0].revision.logins.should eq(0)
     end
 
     it "should bypass attribute assignment wrappers" do
@@ -79,14 +79,17 @@ describe Audited::Adapters::ActiveRecord::Audit, :adapter => :active_record do
 
   end
 
-  it "should set the version number on create" do
-    user = Models::ActiveRecord::User.create! :name => 'Set Version Number'
-    user.audits.first.version.should be(1)
-    user.update_attribute :name, "Set to 2"
-    user.audits(true).first.version.should be(1)
-    user.audits(true).last.version.should be(2)
-    user.destroy
-    Audited.audit_class.where(:auditable_type => 'Models::ActiveRecord::User', :auditable_id => user.id).last.version.should be(3)
+
+  if Audited.use_version_number
+    it "should set the version number on create" do
+      user = Models::ActiveRecord::User.create! :name => 'Set Version Number'
+      user.audits.first.version.should be(1)
+      user.update_attribute :name, "Set to 2"
+      user.audits(true).first.version.should be(1)
+      user.audits(true).last.version.should be(2)
+      user.destroy
+      Audited.audit_class.where(:auditable_type => 'Models::ActiveRecord::User', :auditable_id => user.id).last.version.should be(3)
+    end
   end
 
   describe "reconstruct_attributes" do

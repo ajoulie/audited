@@ -88,11 +88,17 @@ module Audited
 
     private
     def set_version_number
+      return true unless Audited.use_version_number
+
+      self.version = next_version
+    end
+
+    def next_version
       max = self.class.where(
         :auditable_id => auditable_id,
         :auditable_type => auditable_type
       ).order(:version.desc).first.try(:version) || 0
-      self.version = max + 1
+      max + 1
     end
 
     def set_audit_user
